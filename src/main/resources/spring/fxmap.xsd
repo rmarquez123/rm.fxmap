@@ -1,0 +1,45 @@
+<xsd:schema xmlns="http://www.mycompany.com/schema/fxmap"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://www.mycompany.com/schema/fxmap"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+>
+  
+  <xsd:import namespace="http://www.springframework.org/schema/beans"/>  
+  
+  <xsd:element name="bbox-property"> 
+    <xsd:complexType>
+      <xsd:attribute name="id" type="xsd:ID"/>
+      <xsd:attribute name="xmin" type="xsd:double"/>
+      <xsd:attribute name="xmin" type="xsd:double"/>
+      <xsd:attribute name="ymin" type="xsd:double"/>
+      <xsd:attribute name="ymax" type="xsd:double"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="layer"> 
+    <xsd:attribute name="id" type="xsd:ID"/>
+    <xsd:attribute name="type" type="xsd:string"/>
+  </xsd:element>
+  
+  
+  <xsd:element name="layers"> 
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="layer"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="map"> 
+    <xsd:complexType>
+      <xsd:attribute name="id" type="xsd:ID"/>
+      <xsd:attribute name="parentFxml" type="xsd:string"/>
+      <xsd:attribute name="parentNode" type="xsd:string"/>
+      <xsd:attribute name="layersRef" type="xsd:string"/>
+      <xsd:attribute name="bbox" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+</xsd:schema>

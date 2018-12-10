@@ -26,4 +26,25 @@
     </property>
   </bean>
   
+  <fxmap:bbox id="bboxProperty" 
+              xmin="-121.0" 
+              xmax="-120.0" 
+              ymin="37.0" 
+              ymax="38.0"/> 
+
+  <fxmap:layers id="layersList">
+    
+    <fxmap:layer id="sample-point" 
+                 type="point"/>
+    <fxmap:layer id="sample-polygon" 
+                 type="polygon"/>
+  </fxmap:layers> 
+  
+  <fxmap:map parentFxml="fxml/Main.fxml" 
+             parentNode="mapstackpane"
+             layersRef="layersList"
+             bbox="bboxProperty"
+  />
+  
+  
 </beans>
