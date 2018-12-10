@@ -1,4 +1,4 @@
-package com.gei.rm.fxmap.basemap;
+package com.rm.fxmap.basemap;
 
 
 import com.rm.panzoomcanvas.core.Level;

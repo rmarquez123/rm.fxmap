@@ -1,0 +1,9 @@
+package com.rm.fxmap.spring.layers;
+
+/**
+ *
+ * @author rmarquez
+ */
+public class LayerFactory {
+  
+}

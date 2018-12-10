@@ -1,15 +1,13 @@
-package com.gei.rm.fxmap;
+package com.rm.fxmap;
 
-import com.gei.rm.fxmap.basemap.BaseMapTileLayer;
-import com.gei.rm.fxmap.projections.SpatialProjection;
-import com.gei.rm.fxmap.projections.Wgs84Mercator;
-import com.gei.rm.fxmap.projections.Wgs84Spheroid;
+import com.rm.fxmap.basemap.BaseMapTileLayer;
+import com.rm.fxmap.projections.SpatialProjection;
+import com.rm.fxmap.projections.Wgs84Mercator;
+import com.rm.fxmap.projections.Wgs84Spheroid;
 import com.rm.panzoomcanvas.Content;
 import com.rm.panzoomcanvas.FxCanvas;
 import com.rm.panzoomcanvas.components.PositionBar;
 import com.rm.panzoomcanvas.core.FxPoint;
-import com.rm.panzoomcanvas.core.GeometryProjection;
-import com.rm.panzoomcanvas.core.SpatialRef;
 import com.rm.panzoomcanvas.impl.points.ArrayPointsSource;
 import com.rm.panzoomcanvas.impl.points.PointShapeSymbology;
 import com.rm.panzoomcanvas.layers.points.PointMarker;

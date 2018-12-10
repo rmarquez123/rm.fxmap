@@ -1,5 +1,5 @@
 
-package com.gei.rm.fxmap.basemap.tiles;
+package com.rm.fxmap.basemap.tiles;
 
 import java.util.HashMap;
 import java.util.Map;

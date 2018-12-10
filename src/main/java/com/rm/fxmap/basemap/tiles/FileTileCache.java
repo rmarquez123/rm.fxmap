@@ -1,4 +1,4 @@
-package com.gei.rm.fxmap.basemap.tiles;
+package com.rm.fxmap.basemap.tiles;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

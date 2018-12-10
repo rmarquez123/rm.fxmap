@@ -1,4 +1,4 @@
-package com.gei.rm.fxmap.projections;
+package com.rm.fxmap.projections;
 
 import com.rm.panzoomcanvas.core.FxPoint;
 import com.rm.panzoomcanvas.core.GeometryProjection;

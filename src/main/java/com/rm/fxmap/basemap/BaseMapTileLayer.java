@@ -1,12 +1,12 @@
-package com.gei.rm.fxmap.basemap;
+package com.rm.fxmap.basemap;
 
-import com.gei.rm.fxmap.basemap.tiles.InMemoryTileCache;
-import com.gei.rm.fxmap.basemap.tiles.Tile;
-import com.gei.rm.fxmap.basemap.tiles.TileCache;
-import com.gei.rm.fxmap.basemap.tiles.TileIndices;
-import com.gei.rm.fxmap.basemap.tiles.TileIndicesRange;
-import com.gei.rm.fxmap.basemap.tiles.WebServiceTile;
-import com.gei.rm.fxmap.projections.Wgs84Mercator;
+import com.rm.fxmap.basemap.tiles.InMemoryTileCache;
+import com.rm.fxmap.basemap.tiles.Tile;
+import com.rm.fxmap.basemap.tiles.TileCache;
+import com.rm.fxmap.basemap.tiles.TileIndices;
+import com.rm.fxmap.basemap.tiles.TileIndicesRange;
+import com.rm.fxmap.basemap.tiles.WebServiceTile;
+import com.rm.fxmap.projections.Wgs84Mercator;
 import com.rm.panzoomcanvas.FxCanvas;
 import com.rm.panzoomcanvas.ParamsIntersects;
 import com.rm.panzoomcanvas.core.FxEnvelope;

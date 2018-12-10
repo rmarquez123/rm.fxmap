@@ -1,5 +1,5 @@
 
-package com.gei.rm.fxmap.basemap.tiles;
+package com.rm.fxmap.basemap.tiles;
 
 import com.rm.panzoomcanvas.core.ScreenPoint;
 import javafx.beans.property.Property;

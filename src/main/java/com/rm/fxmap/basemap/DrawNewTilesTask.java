@@ -1,9 +1,9 @@
 
-package com.gei.rm.fxmap.basemap;
+package com.rm.fxmap.basemap;
 
 
-import com.gei.rm.fxmap.basemap.tiles.TileIndices;
-import com.gei.rm.fxmap.basemap.tiles.TileIndicesRange;
+import com.rm.fxmap.basemap.tiles.TileIndices;
+import com.rm.fxmap.basemap.tiles.TileIndicesRange;
 import com.rm.panzoomcanvas.core.ScreenPoint;
 import com.rm.panzoomcanvas.layers.DrawArgs;
 import javafx.scene.canvas.Canvas;

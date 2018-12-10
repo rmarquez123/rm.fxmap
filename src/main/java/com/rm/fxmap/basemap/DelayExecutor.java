@@ -1,4 +1,4 @@
-package com.gei.rm.fxmap.basemap;
+package com.rm.fxmap.basemap;
 
 import java.util.Timer;
 import java.util.TimerTask;

@@ -1,4 +1,4 @@
-package com.gei.rm.fxmap.basemap.tiles;
+package com.rm.fxmap.basemap.tiles;
 
 /**
  *

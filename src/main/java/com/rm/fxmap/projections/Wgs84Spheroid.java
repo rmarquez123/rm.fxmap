@@ -1,4 +1,4 @@
-package com.gei.rm.fxmap.projections;
+package com.rm.fxmap.projections;
 
 import com.rm.panzoomcanvas.core.Point;
 import com.rm.panzoomcanvas.core.SpatialRef;
