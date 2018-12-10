@@ -8,7 +8,6 @@ import com.gei.rm.fxmap.basemap.tiles.TileIndicesRange;
 import com.gei.rm.fxmap.basemap.tiles.WebServiceTile;
 import com.gei.rm.fxmap.projections.Wgs84Mercator;
 import com.rm.panzoomcanvas.FxCanvas;
-import com.rm.panzoomcanvas.LayerGeometry;
 import com.rm.panzoomcanvas.ParamsIntersects;
 import com.rm.panzoomcanvas.core.FxEnvelope;
 import com.rm.panzoomcanvas.core.ScreenEnvelope;
@@ -47,12 +46,7 @@ public class BaseMapTileLayer extends BaseLayer {
   }
 
   public BaseMapTileLayer(TileCache cache, String baseUrl) {
-    super("Base", new LayerGeometry() {
-      @Override
-      public boolean intersects(ParamsIntersects args) {
-        return true;
-      }
-    });
+    super("Base", (ParamsIntersects args) -> true);
     this.baseUrl = baseUrl;
     this.cache = cache;
   }
