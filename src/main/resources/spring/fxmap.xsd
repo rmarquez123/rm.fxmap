@@ -12,15 +12,19 @@
     <xsd:complexType>
       <xsd:attribute name="id" type="xsd:ID"/>
       <xsd:attribute name="xmin" type="xsd:double"/>
-      <xsd:attribute name="xmin" type="xsd:double"/>
+      <xsd:attribute name="xmax" type="xsd:double"/>
       <xsd:attribute name="ymin" type="xsd:double"/>
       <xsd:attribute name="ymax" type="xsd:double"/>
+      <xsd:attribute name="sid" type="xsd:integer"/>
     </xsd:complexType>
   </xsd:element>
   
   <xsd:element name="layer"> 
-    <xsd:attribute name="id" type="xsd:ID"/>
-    <xsd:attribute name="type" type="xsd:string"/>
+    <xsd:complexType>
+      <xsd:attribute name="id" type="xsd:ID"/>
+      <xsd:attribute name="type" type="xsd:string"/>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
   </xsd:element>
   
   
@@ -29,6 +33,7 @@
       <xsd:choice minOccurs="0" maxOccurs="unbounded">
         <xsd:element ref="layer"/>
       </xsd:choice>
+      <xsd:attribute name="id" type="xsd:ID"/>
     </xsd:complexType>
   </xsd:element>
   

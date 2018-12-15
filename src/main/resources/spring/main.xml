@@ -7,7 +7,7 @@
        xmlns:lang="http://www.springframework.org/schema/lang"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:rm="http://www.mycompany.com/schema/rm"
+       xmlns:fxmap="http://www.mycompany.com/schema/fxmap"
        
         
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -15,7 +15,7 @@
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-5.0.xsd
           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-5.0.xsd
           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-5.0.xsd
-          http://www.mycompany.com/schema/rm http://www.mycompany.com/schema/rm/rm.xsd">
+          http://www.mycompany.com/schema/fxmap http://www.mycompany.com/schema/fxmap/fxmap.xsd">
           
   
   <bean class="com.rm.springjavafx.FxmlInitializer"> 
@@ -26,25 +26,24 @@
     </property>
   </bean>
   
-  <fxmap:bbox id="bboxProperty" 
+  <fxmap:bbox-property id="bboxProperty" 
               xmin="-121.0" 
               xmax="-120.0" 
               ymin="37.0" 
-              ymax="38.0"/> 
+              ymax="38.0"
+              sid="4326"/> 
 
   <fxmap:layers id="layersList">
-    
     <fxmap:layer id="sample-point" 
+                 name="sample-point"
                  type="point"/>
     <fxmap:layer id="sample-polygon" 
+                 name="sample-polygon"
                  type="polygon"/>
   </fxmap:layers> 
-  
-  <fxmap:map parentFxml="fxml/Main.fxml" 
+  <fxmap:map id = "samplemap"
+             parentFxml="fxml/Main.fxml" 
              parentNode="mapstackpane"
              layersRef="layersList"
-             bbox="bboxProperty"
-  />
-  
-  
+             bbox="bboxProperty"/> 
 </beans>
