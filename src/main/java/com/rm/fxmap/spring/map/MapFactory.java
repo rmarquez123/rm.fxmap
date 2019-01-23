@@ -1,6 +1,7 @@
 package com.rm.fxmap.spring.map;
 
 import com.rm.fxmap.basemap.BaseMapTileLayer;
+import com.rm.fxmap.basemap.tiles.FileTileCache;
 import com.rm.fxmap.projections.SpatialProjection;
 import com.rm.fxmap.projections.Wgs84Mercator;
 import com.rm.panzoomcanvas.Content;
@@ -10,6 +11,7 @@ import com.rm.panzoomcanvas.core.FxEnvelope;
 import com.rm.panzoomcanvas.projections.Projector;
 import com.rm.springjavafx.FxmlInitializer;
 import com.rm.springjavafx.SpringFxUtils;
+import java.io.File;
 import javafx.beans.property.ListProperty;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.FactoryBean;
@@ -61,7 +63,11 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
     Wgs84Mercator wgs84Mercator = new Wgs84Mercator();
     Projector projector = new Projector(wgs84Mercator, spatialProjection);
     Content content = new Content();
-    content.getLayers().getValue().add(new BaseMapTileLayer());
+    String usersDirName = System.getProperty("user.dir");
+    File userDir = new File(usersDirName); 
+    FileTileCache tileCache = new FileTileCache(userDir, "World");
+    BaseMapTileLayer baseMapTileLayer = new BaseMapTileLayer(tileCache);
+    content.getLayers().getValue().add(baseMapTileLayer);
     content.getLayers().getValue().addAll(this.layersRef.getValue());
     FxCanvas result = new FxCanvas(content, projector);
     this.fxmlInitializer.initializeRoots(this.context);

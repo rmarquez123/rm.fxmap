@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,13 +25,17 @@ public class FileTileCache implements TileCache {
 
   /**
    *
-   * @param baseDir
+   * @param baseDir The base directory of where to store tiles.
+   * @param source The source name which is based on the base tile map type.
+   * This will be used as the subfolder name.
    */
   public FileTileCache(File baseDir, String source) {
     this.baseDir = baseDir;
     this.source.setValue(source);
+    Logger.getLogger(FileTileCache.class.getName())
+            .log(Level.INFO, "Map tiles wil be saved at : ''{0}''", this.baseDir);
   }
-
+  
   /**
    * {@inheritDoc}
    * <p>
