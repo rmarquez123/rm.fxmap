@@ -1,2 +1,2 @@
 # rm.fxmap
-map for javafx gui applications. 
+API for 2D map features for javafx gui applications. 
