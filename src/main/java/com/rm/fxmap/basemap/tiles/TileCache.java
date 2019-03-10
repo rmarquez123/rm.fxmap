@@ -1,5 +1,7 @@
 package com.rm.fxmap.basemap.tiles;
 
+import com.rm.fxmap.basemap.BaseMapTileLayer;
+
 /**
  *
  * @author rmarquez
@@ -11,20 +13,20 @@ public interface TileCache {
    * @param key
    * @return
    */
-  boolean containsKey(TileIndices key);
+  boolean containsKey(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key);
 
   /**
    *
    * @param key
    * @return
    */
-  Tile get(TileIndices key);
+  Tile get(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key);
 
   /**
    *
    * @param key
    * @param tile
    */
-  void put(TileIndices key, Tile tile);
+  void put(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key, Tile tile);
   
 }

@@ -31,7 +31,7 @@ import javafx.scene.canvas.GraphicsContext;
  * @author rmarquez
  */
 public class BaseMapTileLayer extends BaseLayer {
-
+  
   final InMemoryTileCache inMemoryCache = new InMemoryTileCache();
   final TileCache cache;
 
@@ -42,16 +42,22 @@ public class BaseMapTileLayer extends BaseLayer {
   
   
   public static enum BASE_MAP {
-    ESRI_STREET_MAP("https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d"),
-    ESRI_WORLD("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/%d/%d/%d");
+    ESRI_STREET_MAP("https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d", "ESRI_World_Street_Map"),
+    ESRI_WORLD("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/%d/%d/%d", "ESRI_World_Imagery");
     private final String baseUrl;
+    private final String subDirName;
 
-    BASE_MAP(String baseUrl) {
+    BASE_MAP(String baseUrl, String subDirName) {
       this.baseUrl = baseUrl;
+      this.subDirName = subDirName;
     }
 
     public String getBaseUrl() {
       return this.baseUrl;
+    }
+
+    public String getSubDirName() {
+      return this.subDirName;
     }
   }
 
@@ -148,7 +154,8 @@ public class BaseMapTileLayer extends BaseLayer {
    * @param graphicsContext2D
    */
   void redrawCachedTileFromInMemory(TileIndices tileIndex, ScreenPoint screenPos, GraphicsContext graphicsContext2D) {
-    Tile tile = this.inMemoryCache.get(tileIndex);
+    BASE_MAP baseMap = this.baseMapProperty.getValue();
+    Tile tile = this.inMemoryCache.get(baseMap, tileIndex);
     Platform.runLater(() -> {
       tile.addToGraphics(graphicsContext2D, screenPos);
     });
@@ -161,7 +168,8 @@ public class BaseMapTileLayer extends BaseLayer {
    * @param graphicsContext2D
    */
   void redrawCachedTile(TileIndices tileIndex, ScreenPoint screenPos, GraphicsContext graphicsContext2D) {
-    Tile tile = this.cache.get(tileIndex);
+    BASE_MAP baseMap = this.baseMapProperty.getValue();
+    Tile tile = this.cache.get(baseMap, tileIndex);
     Platform.runLater(() -> {
       tile.addToGraphics(graphicsContext2D, screenPos);
     });
@@ -176,13 +184,14 @@ public class BaseMapTileLayer extends BaseLayer {
   void initializeTile(TileIndices tileIndex, ScreenPoint screenPos, GraphicsContext graphicsContext2D) {
     String url = this.getUrl(tileIndex);
     try {
-      WebServiceTile tile = new WebServiceTile(url);
+      BASE_MAP baseMap = this.baseMapProperty.getValue();
+      WebServiceTile tile = new WebServiceTile(baseMap, url);
       tile.getImage().addListener((obs, oldVal, newVal) -> {
         tile.addToGraphics(graphicsContext2D, screenPos);
       });
       tile.loadImage();
-      this.cache.put(tileIndex, tile);
-      this.inMemoryCache.put(tileIndex, tile);
+      this.cache.put(baseMap, tileIndex, tile);
+      this.inMemoryCache.put(baseMap, tileIndex, tile);
     } catch (Exception ex) {
       Logger.getLogger(BaseMapTileLayer.class.getName())
         .log(Level.SEVERE, "Error getting tile.", ex);

@@ -1,6 +1,7 @@
 
 package com.rm.fxmap.basemap.tiles;
 
+import com.rm.fxmap.basemap.BaseMapTileLayer;
 import com.rm.panzoomcanvas.core.ScreenPoint;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
@@ -15,9 +16,21 @@ import javafx.scene.image.Image;
 public abstract class Tile {
   
   private final Property<Image> image = new SimpleObjectProperty<>(null);
-
-  public Tile() {
+  
+  private final BaseMapTileLayer.BASE_MAP baseMap;
+  
+  public Tile(BaseMapTileLayer.BASE_MAP baseMap) {
+    this.baseMap = baseMap;
   }
+  
+  /**
+   * 
+   * @return 
+   */
+  public BaseMapTileLayer.BASE_MAP getBaseMap() {
+    return baseMap;
+  }
+  
 
   public final void loadImage() {
     Image _image = this.onLoadImage(); 

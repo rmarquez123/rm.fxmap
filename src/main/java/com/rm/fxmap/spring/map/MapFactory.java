@@ -4,6 +4,7 @@ import com.rm.fxmap.basemap.BaseMapTileLayer;
 import com.rm.fxmap.basemap.tiles.FileTileCache;
 import com.rm.fxmap.projections.SpatialProjection;
 import com.rm.fxmap.projections.Wgs84Mercator;
+import com.rm.fxmap.tools.BaseMapToggle;
 import com.rm.panzoomcanvas.Content;
 import com.rm.panzoomcanvas.FxCanvas;
 import com.rm.panzoomcanvas.Layer;
@@ -64,14 +65,16 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
     Wgs84Mercator wgs84Mercator = new Wgs84Mercator();
     Projector projector = new Projector(wgs84Mercator, spatialProjection);
     Content content = new Content();
-    String usersDirName = System.getProperty("user.home");
+    String usersDirName = System.getProperty("user.home") + "\\AppData\\Roaming\\";
     File userDir = new File(usersDirName);
-    String name = BaseMapTileLayer.BASE_MAP.ESRI_STREET_MAP.name();
-    FileTileCache tileCache = new FileTileCache(userDir, "AppData\\Roaming\\" + name);
+    FileTileCache tileCache = new FileTileCache(userDir);
     BaseMapTileLayer baseMapTileLayer = new BaseMapTileLayer(tileCache);
     content.getLayers().getValue().add(baseMapTileLayer);
     content.getLayers().getValue().addAll(this.layersRef.getValue());
     FxCanvas result = new FxCanvas(content, projector);
+    
+    BaseMapToggle baseMapToggle = new BaseMapToggle(baseMapTileLayer); 
+    baseMapToggle.addToMap(result);
     this.fxmlInitializer.addListener((i) -> {
       Pane refPane;
       try {

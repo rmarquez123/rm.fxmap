@@ -1,5 +1,6 @@
 package com.rm.fxmap.basemap.tiles;
 
+import com.rm.fxmap.basemap.BaseMapTileLayer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
@@ -21,37 +20,35 @@ import javax.imageio.ImageIO;
 public class FileTileCache implements TileCache {
 
   private final File baseDir;
-  private final Property<String> source = new SimpleObjectProperty<>();
 
   /**
    *
    * @param baseDir The base directory of where to store tiles.
-   * @param source The source name which is based on the base tile map type.
-   * This will be used as the subfolder name.
+   * @param source The source name which is based on the base tile map type. This will be
+   * used as the subfolder name.
    */
-  public FileTileCache(File baseDir, String source) {
+  public FileTileCache(File baseDir) {
     this.baseDir = baseDir;
-    this.source.setValue(source);
     Logger.getLogger(FileTileCache.class.getName())
-            .log(Level.INFO, "Map tiles wil be saved at : ''{0}''", this.baseDir);
+      .log(Level.INFO, "Map tiles wil be saved at : ''{0}''", this.baseDir);
   }
-  
+
   /**
    * {@inheritDoc}
    * <p>
    * OVERRIDE: </p>
    */
   @Override
-  public boolean containsKey(TileIndices key) {
-    File file = this.getFile(key);
+  public boolean containsKey(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+    File file = this.getFile(baseMap, key);
     boolean result = file.exists();
     return result;
   }
 
-  private File getFile(TileIndices key) {
+  private File getFile(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
     String keyToFile = key.level + File.separator + key.col + File.separator + key.row + ".png";
-    File result = new File(this.baseDir + File.separator + this.source.getValue(), keyToFile);
-
+    String subDir = baseMap.getSubDirName();
+    File result = new File(this.baseDir + File.separator + subDir, keyToFile);
     return result;
   }
 
@@ -61,11 +58,11 @@ public class FileTileCache implements TileCache {
    * OVERRIDE: </p>
    */
   @Override
-  public Tile get(TileIndices key) {
-    Tile r = new Tile() {
+  public Tile get(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+    Tile r = new Tile(baseMap) {
       @Override
       protected Image onLoadImage() {
-        File file = getFile(key);
+        File file = getFile(baseMap, key);
         InputStream is;
         try {
           is = new FileInputStream(file);
@@ -86,18 +83,20 @@ public class FileTileCache implements TileCache {
    * OVERRIDE: </p>
    */
   @Override
-  public void put(TileIndices key, Tile tile) {
-    File file = this.getFile(key);
-    Image image = tile.getImage().getValue();
-    if (image != null) {
-      if (!file.getParentFile().exists()) {
-        file.getParentFile().mkdirs();
-      }
-      try {
-        BufferedImage x = SwingFXUtils.fromFXImage(image, null);
-        ImageIO.write(x, "png", file);
-      } catch (IOException ex) {
-        throw new RuntimeException(ex);
+  public void put(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key, Tile tile) {
+    if (tile.getBaseMap() != baseMap) {
+      File file = this.getFile(baseMap, key);
+      Image image = tile.getImage().getValue();
+      if (image != null) {
+        if (!file.getParentFile().exists()) {
+          file.getParentFile().mkdirs();
+        }
+        try {
+          BufferedImage x = SwingFXUtils.fromFXImage(image, null);
+          ImageIO.write(x, "png", file);
+        } catch (IOException ex) {
+          throw new RuntimeException(ex);
+        }
       }
     }
   }
