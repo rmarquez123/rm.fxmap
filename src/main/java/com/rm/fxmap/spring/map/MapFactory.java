@@ -12,8 +12,10 @@ import com.rm.panzoomcanvas.projections.Projector;
 import com.rm.springjavafx.FxmlInitializer;
 import com.rm.springjavafx.SpringFxUtils;
 import java.io.File;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.scene.layout.Pane;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,12 @@ import org.springframework.context.ApplicationContext;
  * @author rmarquez
  */
 public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
-  
+
   @Autowired
   private FxmlInitializer fxmlInitializer;
   @Autowired
   private ApplicationContext context;
-  
+
   private String parentFxml;
   private String parentNode;
   private ListProperty<Layer> layersRef;
@@ -50,8 +52,7 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
   public void setBbox(FxEnvelope bbox) {
     this.bbox = bbox;
   }
-  
-  
+
   /**
    * {@inheritDoc}
    * <p>
@@ -63,20 +64,50 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
     Wgs84Mercator wgs84Mercator = new Wgs84Mercator();
     Projector projector = new Projector(wgs84Mercator, spatialProjection);
     Content content = new Content();
-    String usersDirName = System.getProperty("user.dir");
-    File userDir = new File(usersDirName); 
-    FileTileCache tileCache = new FileTileCache(userDir, "World");
+    String usersDirName = System.getProperty("user.home");
+    File userDir = new File(usersDirName);
+    String name = BaseMapTileLayer.BASE_MAP.ESRI_STREET_MAP.name();
+    FileTileCache tileCache = new FileTileCache(userDir, "AppData\\Roaming\\" + name);
     BaseMapTileLayer baseMapTileLayer = new BaseMapTileLayer(tileCache);
     content.getLayers().getValue().add(baseMapTileLayer);
     content.getLayers().getValue().addAll(this.layersRef.getValue());
     FxCanvas result = new FxCanvas(content, projector);
-    this.fxmlInitializer.initializeRoots(this.context);
-    Pane refPane = (Pane) this.fxmlInitializer.getNode(this.parentFxml, this.parentNode);
-    SpringFxUtils.setNodeOnRefPane(refPane, result);
-    
-    if (this.bbox != null) {
-      result.zoomToEnvelope(this.bbox); 
-    }
+    this.fxmlInitializer.addListener((i) -> {
+      Pane refPane;
+      try {
+        refPane = (Pane) this.fxmlInitializer.getNode(this.parentFxml, this.parentNode);
+      } catch (IllegalAccessException ex) {
+        throw new RuntimeException(ex);
+      }
+      SpringFxUtils.setNodeOnRefPane(refPane, result);
+      if (this.bbox != null) {
+        if (result.getParent() != null) {
+          if (result.screenEnvelopeProperty().getValue().getWidth() == 0.0) {
+            MutableObject<Boolean> initialized = new MutableObject<>(false);
+            result.screenEnvelopeProperty().addListener((obs, old, change) -> {
+              Platform.runLater(() -> {
+                if (!initialized.getValue()) {
+                  initialized.setValue(true);
+                  result.zoomToEnvelope(this.bbox);
+                  result.zoomToVirtualPoint(8, this.bbox.getCenterFxPoint());
+                }
+              });
+            });
+          } else {
+            result.zoomToEnvelope(this.bbox);
+          }
+
+        } else {
+          result.parentProperty().addListener((obs, old, change) -> {
+            Platform.runLater(() -> {
+              result.zoomToEnvelope(this.bbox);
+            });
+          });
+
+        }
+
+      }
+    });
     return result;
   }
 
@@ -89,7 +120,7 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
   public Class<?> getObjectType() {
     return FxCanvas.class;
   }
-  
+
   /**
    * {@inheritDoc}
    * <p>
@@ -99,6 +130,5 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
   public void afterPropertiesSet() throws Exception {
     System.out.println("bbox : " + this.bbox);
   }
-  
-  
+
 }

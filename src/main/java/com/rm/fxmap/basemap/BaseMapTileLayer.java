@@ -37,17 +37,30 @@ public class BaseMapTileLayer extends BaseLayer {
   private final DelayExecutor temporaryDrawExecutor = new DelayExecutor(0);
   DrawArgs lastDrawArgs = null;
 
+  public static enum BASE_MAP {
+    ESRI_STREET_MAP("https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d"),
+    ESRI_WORLD("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/%d/%d/%d");
+    private final String baseUrl;
+    BASE_MAP(String baseUrl) {
+      this.baseUrl = baseUrl;
+    }
+    
+    public String getBaseUrl(){
+      return this.baseUrl;
+    }
+  }
+
   public BaseMapTileLayer() {
     this(new InMemoryTileCache());
   }
 
   public BaseMapTileLayer(TileCache cache) {
-    this(cache, "https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d");
+    this(cache, BASE_MAP.ESRI_STREET_MAP);
   }
-
-  public BaseMapTileLayer(TileCache cache, String baseUrl) {
+  
+  public BaseMapTileLayer(TileCache cache, BASE_MAP baseMap) {
     super("Base", (ParamsIntersects args) -> true);
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseMap.getBaseUrl();
     this.cache = cache;
   }
 
@@ -147,13 +160,13 @@ public class BaseMapTileLayer extends BaseLayer {
       this.inMemoryCache.put(tileIndex, tile);
     } catch (Exception ex) {
       Logger.getLogger(BaseMapTileLayer.class.getName())
-              .log(Level.SEVERE, "Error getting tile.", ex);
+        .log(Level.SEVERE, "Error getting tile.", ex);
     }
   }
 
   String getUrl(TileIndices tileIndex) {
     String result = String.format(baseUrl,
-            tileIndex.level, tileIndex.row, tileIndex.col);
+      tileIndex.level, tileIndex.row, tileIndex.col);
     return result;
   }
 

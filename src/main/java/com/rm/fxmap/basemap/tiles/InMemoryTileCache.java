@@ -10,7 +10,11 @@ import java.util.Map;
  */
 public class InMemoryTileCache implements TileCache {
   
-  private Map<TileIndices, Tile> tiles = new HashMap<>(); 
+  private final Map<TileIndices, Tile> tiles; 
+
+  public InMemoryTileCache() {
+    this.tiles = new HashMap<>();
+  }
   
   
   /**

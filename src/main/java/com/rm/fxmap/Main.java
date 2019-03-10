@@ -49,6 +49,15 @@ public class Main extends Application {
     PointMarker<String> marker = new PointMarker<>("Merced", fxPoint);
     ArrayPointsSource source = new ArrayPointsSource<>(marker);
     PointsLayer layer = new PointsLayer("aasf", new PointShapeSymbology(), source);
+    layer.selectableProperty().setValue(true);
+    layer.hoverableProperty().setValue(true);
+    layer.hoveredMarkersProperty().addListener((evt)->{
+      
+    });
+    
+    layer.selectedMarkersProperty().addListener((obs, old, change)->{
+      System.out.println(change);
+    });
     mapCanvas.getContent().getLayers().add(layer);
   }
   
