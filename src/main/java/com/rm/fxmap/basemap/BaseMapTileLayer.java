@@ -20,6 +20,8 @@ import com.rm.panzoomcanvas.projections.Projector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -32,20 +34,23 @@ public class BaseMapTileLayer extends BaseLayer {
 
   final InMemoryTileCache inMemoryCache = new InMemoryTileCache();
   final TileCache cache;
-  final String baseUrl;
+
+  private final Property<BASE_MAP> baseMapProperty = new SimpleObjectProperty<>();
   private final DelayExecutor drawNewTilesExecutor = new DelayExecutor(200);
   private final DelayExecutor temporaryDrawExecutor = new DelayExecutor(0);
   DrawArgs lastDrawArgs = null;
-
+  
+  
   public static enum BASE_MAP {
     ESRI_STREET_MAP("https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d"),
     ESRI_WORLD("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/%d/%d/%d");
     private final String baseUrl;
+
     BASE_MAP(String baseUrl) {
       this.baseUrl = baseUrl;
     }
-    
-    public String getBaseUrl(){
+
+    public String getBaseUrl() {
       return this.baseUrl;
     }
   }
@@ -54,14 +59,34 @@ public class BaseMapTileLayer extends BaseLayer {
     this(new InMemoryTileCache());
   }
 
+  /**
+   *
+   * @param cache
+   */
   public BaseMapTileLayer(TileCache cache) {
     this(cache, BASE_MAP.ESRI_STREET_MAP);
   }
-  
+
+  /**
+   *
+   * @param cache
+   * @param baseMap
+   */
   public BaseMapTileLayer(TileCache cache, BASE_MAP baseMap) {
     super("Base", (ParamsIntersects args) -> true);
-    this.baseUrl = baseMap.getBaseUrl();
+    this.baseMapProperty.setValue(baseMap);
     this.cache = cache;
+    this.baseMapProperty.addListener((obs, old, change)->{
+      this.repaint();
+    });
+  }
+
+  /**
+   *
+   * @return
+   */
+  public Property<BASE_MAP> baseMapProperty() {
+    return this.baseMapProperty;
   }
 
   /**
@@ -164,10 +189,24 @@ public class BaseMapTileLayer extends BaseLayer {
     }
   }
 
+  /**
+   *
+   * @param tileIndex
+   * @return
+   */
   String getUrl(TileIndices tileIndex) {
+    String baseUrl = this.getBaseUrl();
     String result = String.format(baseUrl,
       tileIndex.level, tileIndex.row, tileIndex.col);
     return result;
+  }
+
+  /**
+   *
+   * @return
+   */
+  private String getBaseUrl() {
+    return this.baseMapProperty.getValue().getBaseUrl();
   }
 
   /**
