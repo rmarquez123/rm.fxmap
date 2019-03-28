@@ -35,31 +35,12 @@ public class BaseMapTileLayer extends BaseLayer {
   final InMemoryTileCache inMemoryCache = new InMemoryTileCache();
   final TileCache cache;
 
-  private final Property<BASE_MAP> baseMapProperty = new SimpleObjectProperty<>();
+  private final Property<BaseMap> baseMapProperty = new SimpleObjectProperty<>();
   private final DelayExecutor drawNewTilesExecutor = new DelayExecutor(200);
   private final DelayExecutor temporaryDrawExecutor = new DelayExecutor(0);
   DrawArgs lastDrawArgs = null;
   
   
-  public static enum BASE_MAP {
-    ESRI_STREET_MAP("https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d", "ESRI_World_Street_Map"),
-    ESRI_WORLD("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/%d/%d/%d", "ESRI_World_Imagery");
-    private final String baseUrl;
-    private final String subDirName;
-
-    BASE_MAP(String baseUrl, String subDirName) {
-      this.baseUrl = baseUrl;
-      this.subDirName = subDirName;
-    }
-
-    public String getBaseUrl() {
-      return this.baseUrl;
-    }
-
-    public String getSubDirName() {
-      return this.subDirName;
-    }
-  }
 
   public BaseMapTileLayer() {
     this(new InMemoryTileCache());
@@ -70,7 +51,7 @@ public class BaseMapTileLayer extends BaseLayer {
    * @param cache
    */
   public BaseMapTileLayer(TileCache cache) {
-    this(cache, BASE_MAP.ESRI_STREET_MAP);
+    this(cache, BaseMap.ESRI_STREET_MAP);
   }
 
   /**
@@ -78,7 +59,7 @@ public class BaseMapTileLayer extends BaseLayer {
    * @param cache
    * @param baseMap
    */
-  public BaseMapTileLayer(TileCache cache, BASE_MAP baseMap) {
+  public BaseMapTileLayer(TileCache cache, BaseMap baseMap) {
     super("Base", (ParamsIntersects args) -> true);
     this.baseMapProperty.setValue(baseMap);
     this.cache = cache;
@@ -91,7 +72,7 @@ public class BaseMapTileLayer extends BaseLayer {
    *
    * @return
    */
-  public Property<BASE_MAP> baseMapProperty() {
+  public Property<BaseMap> baseMapProperty() {
     return this.baseMapProperty;
   }
 
@@ -154,7 +135,7 @@ public class BaseMapTileLayer extends BaseLayer {
    * @param graphicsContext2D
    */
   void redrawCachedTileFromInMemory(TileIndices tileIndex, ScreenPoint screenPos, GraphicsContext graphicsContext2D) {
-    BASE_MAP baseMap = this.baseMapProperty.getValue();
+    BaseMap baseMap = this.baseMapProperty.getValue();
     Tile tile = this.inMemoryCache.get(baseMap, tileIndex);
     Platform.runLater(() -> {
       tile.addToGraphics(graphicsContext2D, screenPos);
@@ -168,7 +149,7 @@ public class BaseMapTileLayer extends BaseLayer {
    * @param graphicsContext2D
    */
   void redrawCachedTile(TileIndices tileIndex, ScreenPoint screenPos, GraphicsContext graphicsContext2D) {
-    BASE_MAP baseMap = this.baseMapProperty.getValue();
+    BaseMap baseMap = this.baseMapProperty.getValue();
     Tile tile = this.cache.get(baseMap, tileIndex);
     Platform.runLater(() -> {
       tile.addToGraphics(graphicsContext2D, screenPos);
@@ -184,7 +165,7 @@ public class BaseMapTileLayer extends BaseLayer {
   void initializeTile(TileIndices tileIndex, ScreenPoint screenPos, GraphicsContext graphicsContext2D) {
     String url = this.getUrl(tileIndex);
     try {
-      BASE_MAP baseMap = this.baseMapProperty.getValue();
+      BaseMap baseMap = this.baseMapProperty.getValue();
       WebServiceTile tile = new WebServiceTile(baseMap, url);
       tile.getImage().addListener((obs, oldVal, newVal) -> {
         tile.addToGraphics(graphicsContext2D, screenPos);

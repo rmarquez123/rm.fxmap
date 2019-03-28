@@ -11,3 +11,6 @@ os.arch=amd64
 os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Mar 10 15:09:36 MDT 2019:
+Shutting down instance a816c00e-0169-696d-ca6b-00000ce36320 on database directory classpath:SIS_DATA/Databases/SpatialMetadata with class loader sun.misc.Launcher$AppClassLoader@73d16e93 

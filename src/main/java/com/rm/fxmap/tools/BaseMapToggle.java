@@ -1,8 +1,9 @@
 package com.rm.fxmap.tools;
 
 import com.rm.fxmap.MapTool;
+import com.rm.fxmap.basemap.BaseMap;
 import com.rm.fxmap.basemap.BaseMapTileLayer;
-import com.rm.fxmap.basemap.BaseMapTileLayer.BASE_MAP;
+import com.rm.fxmap.basemap.BaseMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -46,13 +47,13 @@ public class BaseMapToggle extends MapTool {
     this.updateNode(imageView, label);
     StackPane result = new StackPane(imageView, label);
     result.setOnMouseClicked((event) -> {
-      BaseMapTileLayer.BASE_MAP current = this.baseMapTileLayer.baseMapProperty().getValue();
+      BaseMap current = this.baseMapTileLayer.baseMapProperty().getValue();
       switch (current) {
         case ESRI_STREET_MAP:
-          this.baseMapTileLayer.baseMapProperty().setValue(BASE_MAP.ESRI_WORLD);
+          this.baseMapTileLayer.baseMapProperty().setValue(BaseMap.ESRI_WORLD);
           break;
         case ESRI_WORLD:
-          this.baseMapTileLayer.baseMapProperty().setValue(BASE_MAP.ESRI_STREET_MAP);
+          this.baseMapTileLayer.baseMapProperty().setValue(BaseMap.ESRI_STREET_MAP);
           break;
         default:
           throw new AssertionError();
@@ -75,7 +76,7 @@ public class BaseMapToggle extends MapTool {
   private void updateNode(ImageView imageView, Label label) {
     String image;
     String text;
-    if (this.baseMapTileLayer.baseMapProperty().getValue() == BaseMapTileLayer.BASE_MAP.ESRI_STREET_MAP) {
+    if (this.baseMapTileLayer.baseMapProperty().getValue() == BaseMap.ESRI_STREET_MAP) {
       image = "fxmap\\images\\satellite.jpg";
       text = "Imagery";
       imageView.setImage(new Image(image));

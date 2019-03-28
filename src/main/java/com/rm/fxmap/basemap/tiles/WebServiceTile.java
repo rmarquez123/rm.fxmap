@@ -1,6 +1,7 @@
 
 package com.rm.fxmap.basemap.tiles;
 
+import com.rm.fxmap.basemap.BaseMap;
 import com.rm.fxmap.basemap.BaseMapTileLayer;
 import javafx.scene.image.Image;
 
@@ -16,7 +17,7 @@ public class WebServiceTile extends Tile {
    * @param baseMap
    * @param url 
    */
-  public WebServiceTile(BaseMapTileLayer.BASE_MAP baseMap, String url) {
+  public WebServiceTile(BaseMap baseMap, String url) {
     super(baseMap);
     this.url = url;
   }

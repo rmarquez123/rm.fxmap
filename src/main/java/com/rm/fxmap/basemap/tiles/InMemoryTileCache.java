@@ -1,7 +1,8 @@
 package com.rm.fxmap.basemap.tiles;
 
+import com.rm.fxmap.basemap.BaseMap;
 import com.rm.fxmap.basemap.BaseMapTileLayer;
-import com.rm.fxmap.basemap.BaseMapTileLayer.BASE_MAP;
+import com.rm.fxmap.basemap.BaseMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 public class InMemoryTileCache implements TileCache {
 
-  private final Map<BASE_MAP, Map<TileIndices, Tile>> tiles;
+  private final Map<BaseMap, Map<TileIndices, Tile>> tiles;
 
   /**
    *
@@ -26,7 +27,7 @@ public class InMemoryTileCache implements TileCache {
    * @param tile
    */
   @Override
-  public void put(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key, Tile tile) {
+  public void put(BaseMap baseMap, TileIndices key, Tile tile) {
     if (tile.getBaseMap() == baseMap) {
       if (!this.tiles.containsKey(baseMap)) {
         this.tiles.put(baseMap, new HashMap<>());
@@ -41,7 +42,7 @@ public class InMemoryTileCache implements TileCache {
    * @return
    */
   @Override
-  public boolean containsKey(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+  public boolean containsKey(BaseMap baseMap, TileIndices key) {
     Map<TileIndices, Tile> baseMapTiles = tiles.get(baseMap);
     boolean result;
     if (baseMapTiles == null) {
@@ -58,7 +59,7 @@ public class InMemoryTileCache implements TileCache {
    * @return
    */
   @Override
-  public Tile get(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+  public Tile get(BaseMap baseMap, TileIndices key) {
     Map<TileIndices, Tile> baseMapTiles = tiles.get(baseMap);
     Tile result = (baseMapTiles == null) ? null : baseMapTiles.get(key);
     return result;

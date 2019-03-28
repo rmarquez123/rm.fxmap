@@ -30,7 +30,7 @@ class DrawNewTilesTask implements Task {
     GraphicsContext graphics = canvas.getGraphicsContext2D();
     tileIndicesRange.forEach((TileIndices tileIndex) -> {
       ScreenPoint screenPos = self.getScreenPosition(args, tileIndicesRange, tileIndex);
-      BaseMapTileLayer.BASE_MAP baseMap = self.baseMapProperty().getValue();
+      BaseMap baseMap = self.baseMapProperty().getValue();
       if (self.inMemoryCache.containsKey(baseMap, tileIndex)) {
         self.redrawCachedTileFromInMemory(tileIndex, screenPos, graphics);
       } else if (self.cache.containsKey(baseMap, tileIndex)) {

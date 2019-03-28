@@ -1,6 +1,6 @@
 package com.rm.fxmap.basemap.tiles;
 
-import com.rm.fxmap.basemap.BaseMapTileLayer;
+import com.rm.fxmap.basemap.BaseMap;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,13 +39,13 @@ public class FileTileCache implements TileCache {
    * OVERRIDE: </p>
    */
   @Override
-  public boolean containsKey(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+  public boolean containsKey(BaseMap baseMap, TileIndices key) {
     File file = this.getFile(baseMap, key);
     boolean result = file.exists();
     return result;
   }
 
-  private File getFile(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+  private File getFile(BaseMap baseMap, TileIndices key) {
     String keyToFile = key.level + File.separator + key.col + File.separator + key.row + ".png";
     String subDir = baseMap.getSubDirName();
     File result = new File(this.baseDir + File.separator + subDir, keyToFile);
@@ -58,7 +58,7 @@ public class FileTileCache implements TileCache {
    * OVERRIDE: </p>
    */
   @Override
-  public Tile get(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key) {
+  public Tile get(BaseMap baseMap, TileIndices key) {
     Tile r = new Tile(baseMap) {
       @Override
       protected Image onLoadImage() {
@@ -83,7 +83,7 @@ public class FileTileCache implements TileCache {
    * OVERRIDE: </p>
    */
   @Override
-  public void put(BaseMapTileLayer.BASE_MAP baseMap, TileIndices key, Tile tile) {
+  public void put(BaseMap baseMap, TileIndices key, Tile tile) {
     if (tile.getBaseMap() != baseMap) {
       File file = this.getFile(baseMap, key);
       Image image = tile.getImage().getValue();
