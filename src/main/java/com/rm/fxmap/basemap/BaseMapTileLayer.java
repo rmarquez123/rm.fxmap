@@ -40,8 +40,6 @@ public class BaseMapTileLayer extends BaseLayer {
   private final DelayExecutor temporaryDrawExecutor = new DelayExecutor(0);
   DrawArgs lastDrawArgs = null;
   
-  
-
   public BaseMapTileLayer() {
     this(new InMemoryTileCache());
   }

@@ -36,9 +36,7 @@ public class MainTestMapTool extends Application {
     
     Scene scene = new Scene(mapCanvas.getParent());
     this.addLayers(mapCanvas);
-    
-    
-    
+    scene.getStylesheets().add("styles/fxmap.css"); 
     stage.setScene(scene);
     stage.setWidth(500);
     stage.setHeight(500);
@@ -46,7 +44,6 @@ public class MainTestMapTool extends Application {
   }
 
   private void addLayers(FxCanvas mapCanvas) {
-    
     BaseMapTileLayer baseMapTileLayer = new BaseMapTileLayer();
     mapCanvas.getContent().getLayers().add(baseMapTileLayer);
     MapTool toggle = new BaseMapToggle(baseMapTileLayer);

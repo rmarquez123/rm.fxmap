@@ -29,7 +29,10 @@ public class DrawTemporaryTilesTask implements Task {
     this.host = host;
     this.args = args;
   }
-
+  
+  /**
+   * 
+   */
   @Override
   public void execute() {
     DrawArgs drawArgs = this.host.lastDrawArgs;
@@ -55,7 +58,6 @@ public class DrawTemporaryTilesTask implements Task {
       double width = sc.getWidth();
       canvas.getGraphicsContext2D().drawImage(image, x, y, width, height);
     }
-
   }
 
   @Override

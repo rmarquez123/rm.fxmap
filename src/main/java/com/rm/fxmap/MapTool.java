@@ -20,10 +20,16 @@ public abstract class MapTool {
    * @param mapCanvas
    */
   public void addToMap(FxCanvas mapCanvas) {
-    Node node = this.onGetNode();
+    Node node = this.getNode();
     mapCanvas.addTool(node);
   }
-
+  
+  public Node getNode() {
+    Node node = this.onGetNode();
+    node.getStyleClass().add("maptool"); 
+    return node;
+  }
+  
   /**
    *
    * @return

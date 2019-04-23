@@ -1,0 +1,18 @@
+/* 
+    Created on : Apr 21, 2019, 9:57:49 AM
+    Author     : Ricardo Marquez
+*/
+.maptool ImageView {
+  -fx-border-radius: 5;
+  -fx-border-color: blue;
+}
+
+.basemaptoggle {
+  -fx-border-radius: 5;
+  -fx-border-color: gray;
+}
+
+.basemaptoggle-image{
+  -fx-border-radius: 7;
+  -fx-border-color: gray;
+}
