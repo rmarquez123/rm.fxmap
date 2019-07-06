@@ -19,24 +19,30 @@ public class ProjectionsTest {
 
   @Test
   public void test1() throws Exception {
+    long previous = System.currentTimeMillis();
     SpatialProjection projection = new SpatialProjection();
+    Wgs84Spheroid inSr = new Wgs84Spheroid();
+    Wgs84Mercator outSr = new Wgs84Mercator();
+    System.out.println("elapsed time in seconds: " + (System.currentTimeMillis() - previous)/1000.0);
     for (int i = 0; i < 10; i++) {
-      long previous = System.currentTimeMillis();
-      FxPoint pointMerc = projection.project(new FxPoint(-120.43, 37.36, new Wgs84Spheroid()), new Wgs84Mercator());
+      previous = System.currentTimeMillis();
+      FxPoint testPt = new FxPoint(-120.43, 37.36, inSr);
+      FxPoint pointMerc = projection.project(testPt, outSr);
       System.out.println(pointMerc);
-      System.out.println((System.currentTimeMillis() - previous) * 1000.0);
+      System.out.println("elapsed time in seconds: " + (System.currentTimeMillis() - previous)/1000.0);
     }
   }
 
   @Test
   public void test2() throws Exception {
     CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:3857");
-    Collection<? extends GeographicExtent> geoDomains = targetCRS.getDomainOfValidity().getGeographicElements(); 
+
+    Collection<? extends GeographicExtent> geoDomains = targetCRS.getDomainOfValidity().getGeographicElements();
     for (GeographicExtent geoDomain : geoDomains) {
-      ((DefaultGeographicBoundingBox) geoDomain).getEastBoundLongitude(); 
+      ((DefaultGeographicBoundingBox) geoDomain).getEastBoundLongitude();
       ((DefaultGeographicBoundingBox) geoDomain).getNorthBoundLatitude();
-      
-      System.out.println( );
+
+      System.out.println();
     }
   }
 
