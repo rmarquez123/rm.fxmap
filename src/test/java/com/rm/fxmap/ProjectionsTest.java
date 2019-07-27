@@ -32,16 +32,16 @@ public class ProjectionsTest {
       System.out.println("elapsed time in seconds: " + (System.currentTimeMillis() - previous)/1000.0);
     }
   }
-
+  
+  
+  
   @Test
   public void test2() throws Exception {
     CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:3857");
-
     Collection<? extends GeographicExtent> geoDomains = targetCRS.getDomainOfValidity().getGeographicElements();
     for (GeographicExtent geoDomain : geoDomains) {
       ((DefaultGeographicBoundingBox) geoDomain).getEastBoundLongitude();
       ((DefaultGeographicBoundingBox) geoDomain).getNorthBoundLatitude();
-
       System.out.println();
     }
   }

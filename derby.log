@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Fri May 17 11:12:38 MDT 2019:
-Booting Derby (version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137)) instance a816c00e-016a-c6c8-0339-00000d271980 
+Sun Jul 07 14:21:40 MDT 2019:
+Booting Derby (version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137)) instance a816c00e-016b-ce19-6970-00000d12d7f0 
 on database directory classpath:SIS_DATA/Databases/SpatialMetadata in READ ONLY mode with class loader sun.misc.Launcher$AppClassLoader@18b4aac2. 
 Loaded from file:/C:/Users/Ricardo%20Marquez/.m2/repository/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar.
 java.vendor=Oracle Corporation
@@ -12,5 +12,5 @@ os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Fri May 17 11:12:46 MDT 2019:
-Shutting down instance a816c00e-016a-c6c8-0339-00000d271980 on database directory classpath:SIS_DATA/Databases/SpatialMetadata with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Sun Jul 07 14:21:50 MDT 2019:
+Shutting down instance a816c00e-016b-ce19-6970-00000d12d7f0 on database directory classpath:SIS_DATA/Databases/SpatialMetadata with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
