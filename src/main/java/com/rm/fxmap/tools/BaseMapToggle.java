@@ -3,6 +3,7 @@ package com.rm.fxmap.tools;
 import com.rm.fxmap.MapTool;
 import com.rm.fxmap.basemap.BaseMap;
 import com.rm.fxmap.basemap.BaseMapTileLayer;
+import java.io.InputStream;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -75,21 +76,32 @@ public class BaseMapToggle extends MapTool {
    * @param label
    */
   private void updateNode(ImageView imageView, Label label) {
-    String image;
+    String imgResource;
+    InputStream imageStream;
     String text;
     if (this.baseMapTileLayer.baseMapProperty().getValue() == BaseMap.ESRI_STREET_MAP) {
-      image = "fxmap\\images\\satellite.jpg";
+      imgResource = "fxmap/images/satellite.jpg";
+      imageStream = this.getClass().getClassLoader().getResourceAsStream(imgResource);
       text = "Imagery";
       double w = 60;
       double h = 60;
-      imageView.setImage(new Image(image, w, h, true, true));
+      Image imageObj;
+      try {
+        imageObj = new Image(imageStream, w, h, true, true);
+      } catch(Exception ex) {
+        throw new RuntimeException("Error on creating image.  Check args: {"
+          + "imageUrl = " + imgResource
+          + "}", ex); 
+      }
+      imageView.setImage(imageObj);
       label.setText(text);
     } else {
-      image = "fxmap\\images\\topo.jpg";
+      imgResource = "fxmap/images/topo.jpg";
+      imageStream = this.getClass().getClassLoader().getResourceAsStream(imgResource);
       text = "Topographic";
       double w = 60;
       double h = 60;
-      imageView.setImage(new Image(image, w, h, true, true));
+      imageView.setImage(new Image(imageStream, w, h, true, true));
       label.setText(text);
       label.setTextFill(Color.BLACK);
     }
