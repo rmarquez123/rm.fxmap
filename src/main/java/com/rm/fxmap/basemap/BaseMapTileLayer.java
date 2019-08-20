@@ -31,7 +31,7 @@ import javafx.scene.canvas.GraphicsContext;
  * @author rmarquez
  */
 public class BaseMapTileLayer extends BaseLayer {
-  
+
   final InMemoryTileCache inMemoryCache = new InMemoryTileCache();
   final TileCache cache;
 
@@ -39,7 +39,7 @@ public class BaseMapTileLayer extends BaseLayer {
   private final DelayExecutor drawNewTilesExecutor = new DelayExecutor(200);
   private final DelayExecutor temporaryDrawExecutor = new DelayExecutor(0);
   DrawArgs lastDrawArgs = null;
-  
+
   public BaseMapTileLayer() {
     this(new InMemoryTileCache());
   }
@@ -61,7 +61,7 @@ public class BaseMapTileLayer extends BaseLayer {
     super("Base", (ParamsIntersects args) -> true);
     this.baseMapProperty.setValue(baseMap);
     this.cache = cache;
-    this.baseMapProperty.addListener((obs, old, change)->{
+    this.baseMapProperty.addListener((obs, old, change) -> {
       this.repaint();
     });
   }
@@ -105,10 +105,20 @@ public class BaseMapTileLayer extends BaseLayer {
    */
   @Override
   protected void onDraw(DrawArgs args) {
-    final BaseMapTileLayer self = this;
-    this.drawNewTilesExecutor.setTask(new DrawNewTilesTask(self, args));
-    this.temporaryDrawExecutor.setTask(new DrawTemporaryTilesTask(self, args));
-    this.lastDrawArgs = args;
+    if (Platform.isFxApplicationThread()) {
+      final BaseMapTileLayer self = this;
+      this.drawNewTilesExecutor.setTask(new DrawNewTilesTask(self, args));
+      this.temporaryDrawExecutor.setTask(new DrawTemporaryTilesTask(self, args));
+      this.lastDrawArgs = args;
+    } else {
+      Platform.runLater(() -> {
+        final BaseMapTileLayer self = this;
+        this.drawNewTilesExecutor.setTask(new DrawNewTilesTask(self, args));
+        this.temporaryDrawExecutor.setTask(new DrawTemporaryTilesTask(self, args));
+        this.lastDrawArgs = args;
+      });
+    }
+
   }
 
   /**
