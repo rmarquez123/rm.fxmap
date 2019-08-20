@@ -12,7 +12,6 @@ import com.rm.panzoomcanvas.projections.Projector;
 import com.rm.springjavafx.FxmlInitializer;
 import com.rm.springjavafx.annotations.FxController;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
@@ -64,15 +63,9 @@ public class FxMapBuilder {
     FxCanvas mapCanvas = new FxCanvas(content, projector);
     PositionBar positionBar = new PositionBar(mapCanvas);
     StackPane.setAlignment(positionBar, Pos.BOTTOM_RIGHT);
-    root.getChildren().addAll(mapCanvas, positionBar);
-    this.fxmlInitializer.addListener((i) -> {
-      root.getChildren().addListener((ListChangeListener.Change<? extends Node> c) -> {
-        Platform.runLater(() -> {
-          positionBar.toFront();
-        });
-      });
-    });
-
+    mapCanvas.addTool(positionBar);
+    root.getChildren().addAll(mapCanvas);
+    
     StackPane.setAlignment(mapCanvas, Pos.CENTER);
     mapCanvas.widthProperty().bind(root.widthProperty());
     mapCanvas.heightProperty().bind(root.heightProperty());

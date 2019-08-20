@@ -1,10 +1,10 @@
 package com.rm.fxmap.annotations;
 
+import com.rm.fxmap.projections.Wgs84Spheroid;
 import com.rm.panzoomcanvas.FxCanvas;
 import com.rm.panzoomcanvas.impl.points.ArrayPointsSource;
 import com.rm.panzoomcanvas.impl.points.PointShape;
 import com.rm.panzoomcanvas.impl.points.PointShapeSymbology;
-import com.rm.panzoomcanvas.layers.points.PointMarker;
 import com.rm.panzoomcanvas.layers.points.PointsLayer;
 import com.rm.panzoomcanvas.layers.points.PointsSource;
 import com.rm.springjavafx.FxmlInitializer;
@@ -55,8 +55,7 @@ public class FxMapLayerBuilder {
         Color selectColor = Color.web(conf.selectedColorHex());
         symbology.getSelected().fillColorProperty().setValue(selectColor);
         
-        
-        PointsSource<? extends Object> source = new ArrayPointsSource<>(new PointMarker[]{});
+        PointsSource<? extends Object> source = new ArrayPointsSource<>(new Wgs84Spheroid());
         PointsLayer<? extends Object> layer = new PointsLayer<>(name, symbology, source);
         layer.selectableProperty().set(true);
         layer.hoverableProperty().set(true);

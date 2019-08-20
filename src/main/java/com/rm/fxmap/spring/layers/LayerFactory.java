@@ -7,7 +7,6 @@ import com.rm.panzoomcanvas.impl.points.PointShapeSymbology;
 import com.rm.panzoomcanvas.impl.polygon.BasePolygonSource;
 import com.rm.panzoomcanvas.impl.polygon.DefaultPolygonSymbology;
 import com.rm.panzoomcanvas.layers.DrawArgs;
-import com.rm.panzoomcanvas.layers.points.PointMarker;
 import com.rm.panzoomcanvas.layers.points.PointSymbology;
 import com.rm.panzoomcanvas.layers.points.PointsLayer;
 import com.rm.panzoomcanvas.layers.points.PointsSource;
@@ -55,7 +54,7 @@ public class LayerFactory implements FactoryBean<Layer>, InitializingBean {
     switch (this.type) {
       case "point":
         PointSymbology symbology = new PointShapeSymbology();
-        PointsSource source = new ArrayPointsSource(new PointMarker[]{});
+        PointsSource source = new ArrayPointsSource(new Wgs84Spheroid());
         result = new PointsLayer<>(this.name, symbology, source);
         break;
       case "polygon":

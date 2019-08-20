@@ -17,9 +17,18 @@ public class AbstractFxPointLayer {
    * 
    * @param layer 
    */
-  public void setPointsLayer(PointsLayer layer) {
+  void setPointsLayer(PointsLayer layer) {
     this.layer = layer;
   }
+
+  /**
+   * 
+   * @return 
+   */
+  public PointsLayer getLayer() {
+    return layer;
+  }
+  
 
   /**
    *
