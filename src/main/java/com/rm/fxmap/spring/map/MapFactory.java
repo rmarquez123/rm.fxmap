@@ -72,8 +72,8 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
     content.getLayers().getValue().add(baseMapTileLayer);
     content.getLayers().getValue().addAll(this.layersRef.getValue());
     FxCanvas result = new FxCanvas(content, projector);
-    
-    BaseMapToggle baseMapToggle = new BaseMapToggle(baseMapTileLayer); 
+
+    BaseMapToggle baseMapToggle = new BaseMapToggle(baseMapTileLayer);
     baseMapToggle.addToMap(result);
     this.fxmlInitializer.addListener((i) -> {
       Pane refPane;
@@ -84,34 +84,30 @@ public class MapFactory implements FactoryBean<FxCanvas>, InitializingBean {
       }
       SpringFxUtils.setNodeOnRefPane(refPane, result);
       if (this.bbox != null) {
-        if (result.getParent() != null) {
-          if (result.screenEnvelopeProperty().getValue().getWidth() == 0.0) {
-            MutableObject<Boolean> initialized = new MutableObject<>(false);
-            result.screenEnvelopeProperty().addListener((obs, old, change) -> {
-              Platform.runLater(() -> {
-                if (!initialized.getValue()) {
-                  initialized.setValue(true);
-                  result.zoomToEnvelope(this.bbox);
-                  result.zoomToVirtualPoint(8, this.bbox.getCenterFxPoint());
-                }
-              });
-            });
-          } else {
-            result.zoomToEnvelope(this.bbox);
-          }
-
+        MutableObject<Boolean> initialized = new MutableObject<>(false);
+        if (result.screenEnvelopeProperty().getValue().getWidth() > 0.0) {
+          this.zoomToBoundingBox(result, initialized);
         } else {
-          result.parentProperty().addListener((obs, old, change) -> {
-            Platform.runLater(() -> {
-              result.zoomToEnvelope(this.bbox);
-            });
+          result.screenEnvelopeProperty().addListener((obs, old, change) -> {
+            this.zoomToBoundingBox(result, initialized);
           });
+        }
+      }
+    });
+    return result;
+  }
 
+  private void zoomToBoundingBox(FxCanvas result, MutableObject<Boolean> initialized) {
+    Platform.runLater(() -> {
+      if (result.screenEnvelopeProperty().getValue().getWidth() > 0.0) {
+        if (!initialized.getValue()) {
+          initialized.setValue(true);
+          result.zoomToEnvelope(this.bbox);
+          result.zoomToVirtualPoint(8, this.bbox.getCenterFxPoint());
         }
 
       }
     });
-    return result;
   }
 
   /**
