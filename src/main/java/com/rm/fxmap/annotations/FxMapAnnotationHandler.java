@@ -43,14 +43,16 @@ public class FxMapAnnotationHandler implements InitializingBean, AnnotationHandl
     Map<String, Object> beans = this.applicationContext.getBeansWithAnnotation(FxMap.class);
     FxMapBuilder mapBuilder = new FxMapBuilder(this.fxmlInitializer, this.applicationContext);
     FxMapLayerBuilder layerBuilder = new FxMapLayerBuilder(fxmlInitializer, applicationContext);
+    FxMapToolsBuilder mapToolsBuilder = new FxMapToolsBuilder(fxmlInitializer, applicationContext);
     for (Map.Entry<String, Object> entry : beans.entrySet()) {
       String beanId = entry.getKey();
       Object bean = entry.getValue();
       FxCanvas mapCanvas = mapBuilder.createMap(bean);
-      String id = bean.getClass().getDeclaredAnnotation(FxMap.class).id();
+      String mapId = bean.getClass().getDeclaredAnnotation(FxMap.class).id();
       Map<String, Object> pointLayers = this.applicationContext.getBeansWithAnnotation(FxPointLayer.class);
-      layerBuilder.createLayers(id, mapCanvas, pointLayers);
-      this.registerBean(id, mapCanvas);
+      layerBuilder.createLayers(mapId, mapCanvas, pointLayers);
+      this.registerBean(mapId, mapCanvas);
+      mapToolsBuilder.build(mapId, mapCanvas); 
     }
   }
 
