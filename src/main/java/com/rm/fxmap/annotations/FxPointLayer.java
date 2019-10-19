@@ -12,7 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface FxPointLayer {
-  String mapId(); 
+
+  String mapId();
+
   /**
    *
    * @return
@@ -23,31 +25,65 @@ public @interface FxPointLayer {
    *
    * @return
    */
-  String selectedBeanId();
+  String selectedBeanId() default "";
 
   /**
    *
    * @return
    */
   String basecolorHex();
-  
+
+  /**
+   *
+   * @return
+   */
+  String strokecolorHex() default "";
+
   /**
    *
    * @return
    */
   int basewidth();
-  
+
   /**
-   * 
-   * @return 
+   *
+   * @return
    */
   String selectedColorHex();
-  
+
   /**
-   * 
-   * @return 
+   *
+   * @return
    */
   int selectedWidth();
-  
-  
+
+  /**
+   *
+   * @return
+   */
+  String visibilityId() default "";
+
+  Label label() default @Label(ignore = true, textconvertId = "");
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.ANNOTATION_TYPE)
+  public static @interface Label {
+
+    boolean ignore() default false;
+
+    String foregroundColorHex() default "#000";
+
+    String backgroundColorHex() default "#fff";
+
+    double east() default 5;
+
+    double north() default 5;
+
+    double west() default Double.NaN;
+
+    double south() default Double.NaN;
+
+    String textconvertId();
+
+  }
 }

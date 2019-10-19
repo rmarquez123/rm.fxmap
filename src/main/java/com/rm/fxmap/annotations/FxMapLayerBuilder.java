@@ -1,15 +1,12 @@
 package com.rm.fxmap.annotations;
 
-import com.rm.fxmap.projections.Wgs84Spheroid;
 import com.rm.panzoomcanvas.FxCanvas;
-import com.rm.panzoomcanvas.impl.points.ArrayPointsSource;
-import com.rm.panzoomcanvas.impl.points.PointShape;
-import com.rm.panzoomcanvas.impl.points.PointShapeSymbology;
-import com.rm.panzoomcanvas.layers.points.PointsLayer;
-import com.rm.panzoomcanvas.layers.points.PointsSource;
+import com.rm.panzoomcanvas.Layer;
 import com.rm.springjavafx.FxmlInitializer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import javafx.scene.paint.Color;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -19,50 +16,69 @@ import org.springframework.context.ApplicationContext;
 public class FxMapLayerBuilder {
 
   private final FxmlInitializer fxmlInitializer;
-
   private final ApplicationContext applicationContext;
-  
+  private final List<FxLayerBuilder> builders;
+
   /**
-   * 
+   *
    * @param fxmlInitializer
-   * @param applicationContext 
+   * @param applicationContext
    */
   public FxMapLayerBuilder(FxmlInitializer fxmlInitializer, ApplicationContext applicationContext) {
     this.fxmlInitializer = fxmlInitializer;
     this.applicationContext = applicationContext;
+    this.builders = new ArrayList<>(); 
+    this.builders.add(new FxPointLayerBuilder(this.applicationContext));
+    this.builders.add(new FxLineLayerBuilder(this.applicationContext));
   }
 
   /**
    *
    * @param canvas
    */
-  public void createLayers(String mapId, FxCanvas canvas, Map<String, Object> pointLayerBeans) {
-    for (Map.Entry<String, Object> entry : pointLayerBeans.entrySet()) {
+  void createLayers(String mapId, FxCanvas canvas, Map<String, Object> layerBeans) {
+    for (Map.Entry<String, Object> entry : layerBeans.entrySet()) {
       String beanId = entry.getKey();
       Object bean = entry.getValue();
-      if (!(bean instanceof AbstractFxPointLayer)) {
+      if (!(bean instanceof FxMapLayer)) {
         throw new IllegalStateException(
-          String.format("bean '%s' is not an instance of '%s'", beanId, AbstractFxPointLayer.class));
+          String.format("bean '%s' is not an instance of '%s'", beanId, FxMapLayer.class));
       }
-      FxPointLayer conf = bean.getClass().getDeclaredAnnotation(FxPointLayer.class);
-      String refMapId = conf.mapId();
-      if (mapId.equals(refMapId)) {
-        String name = conf.name();
-        PointShapeSymbology symbology = new PointShapeSymbology();
-        Color baseColor = Color.web(conf.basecolorHex());
-        symbology.fillColorProperty().setValue(baseColor);
-        symbology.pointShapeProperty().setValue(PointShape.CIRCLE);
-        Color selectColor = Color.web(conf.selectedColorHex());
-        symbology.getSelected().fillColorProperty().setValue(selectColor);
-        
-        PointsSource<? extends Object> source = new ArrayPointsSource<>(new Wgs84Spheroid());
-        PointsLayer<? extends Object> layer = new PointsLayer<>(name, symbology, source);
-        layer.selectableProperty().set(true);
-        layer.hoverableProperty().set(true);
-        ((AbstractFxPointLayer) bean).setPointsLayer(layer);
-        canvas.getContent().getLayers().add(layer);
+      try {
+        this.createLayer(bean, mapId, canvas);
+      } catch (Exception ex) {
+        throw new RuntimeException(
+          String.format("Error on creating layer : '%s'", beanId),
+          ex);
       }
     }
   }
 
+  /**
+   *
+   * @param bean
+   * @param mapId
+   * @param canvas
+   * @throws BeansException
+   */
+  private void createLayer(Object bean, String mapId, FxCanvas canvas) {
+    FxLayerBuilder b = this.getLayerBuilder(bean);
+    if (b.getRefMapId(bean).equals(mapId)) {
+      Layer layer = b.createLayer(bean);
+      canvas.getContent().getLayers().add(layer);
+      ((FxMapLayer) bean).setLayer(layer);
+    }
+  }
+  
+  /**
+   * 
+   * @param bean 
+   */
+  private FxLayerBuilder getLayerBuilder(Object bean) {
+    FxLayerBuilder result = this.builders.stream()
+      .filter((b)->b.isBeanValid(bean))
+      .findFirst()
+      .orElse(null); 
+    return result;
+  }
 }

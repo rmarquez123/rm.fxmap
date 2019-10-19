@@ -3,6 +3,7 @@ package com.rm.fxmap.annotations;
 import com.rm.panzoomcanvas.FxCanvas;
 import com.rm.springjavafx.AnnotationHandler;
 import com.rm.springjavafx.FxmlInitializer;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +47,13 @@ public class FxMapAnnotationHandler implements InitializingBean, AnnotationHandl
     FxMapToolsBuilder mapToolsBuilder = new FxMapToolsBuilder(fxmlInitializer, applicationContext);
     for (Map.Entry<String, Object> entry : beans.entrySet()) {
       String beanId = entry.getKey();
+      
       Object bean = entry.getValue();
       FxCanvas mapCanvas = mapBuilder.createMap(bean);
       String mapId = bean.getClass().getDeclaredAnnotation(FxMap.class).id();
-      Map<String, Object> pointLayers = this.applicationContext.getBeansWithAnnotation(FxPointLayer.class);
+      Map<String, Object> pointLayers = new HashMap<>(); 
+      pointLayers.putAll(this.applicationContext.getBeansWithAnnotation(FxPointLayer.class));
+      pointLayers.putAll(this.applicationContext.getBeansWithAnnotation(FxLineLayer.class)); 
       layerBuilder.createLayers(mapId, mapCanvas, pointLayers);
       this.registerBean(mapId, mapCanvas);
       mapToolsBuilder.build(mapId, mapCanvas); 
