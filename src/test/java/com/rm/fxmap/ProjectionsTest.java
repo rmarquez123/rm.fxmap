@@ -28,11 +28,12 @@ public class ProjectionsTest {
       previous = System.currentTimeMillis();
       FxPoint testPt = new FxPoint(-120.43, 37.36, inSr);
       FxPoint pointMerc = projection.project(testPt, outSr);
-      System.out.println(pointMerc);
+      FxPoint inverse = projection.project(pointMerc, inSr);
+      System.out.println(inverse);
       System.out.println("elapsed time in seconds: " + (System.currentTimeMillis() - previous)/1000.0);
     }
   }
-  
+
   
   
   @Test

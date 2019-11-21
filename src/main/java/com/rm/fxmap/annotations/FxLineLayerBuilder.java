@@ -66,7 +66,7 @@ public class FxLineLayerBuilder implements FxLayerBuilder {
         .getBean(conf.visibilityId());
       RmBindings.bind1To2(result.visibleProperty(), property);
     }
-
+    result.deSelectOnClickProperty().set(false);
     bindSelection(conf, result);
     return result;
   }
