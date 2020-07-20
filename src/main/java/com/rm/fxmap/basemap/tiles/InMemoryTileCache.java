@@ -1,8 +1,6 @@
 package com.rm.fxmap.basemap.tiles;
 
 import com.rm.fxmap.basemap.BaseMap;
-import com.rm.fxmap.basemap.BaseMapTileLayer;
-import com.rm.fxmap.basemap.BaseMap;
 import java.util.HashMap;
 import java.util.Map;
 

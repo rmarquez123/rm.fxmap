@@ -46,26 +46,30 @@ public class MainPointSymbologyWithData extends Application {
   private DoubleProperty parameterProperty;
   private Property<LinearRangeColorModel> colorModelProperty = new SimpleObjectProperty<>();
 
+  public static void main(String[] args) {
+    launch(args);
+  }
+  
   @Override
   public void start(Stage stage) throws Exception {
     this.parameterProperty = new SimpleDoubleProperty(5d);
     Stop minStop = new Stop(0, Color.BLACK);
     Stop maxStop = new Stop(10, Color.WHITE);
-    this.colorModelProperty.setValue( new LinearRangeColorModel(minStop, maxStop)); 
-    
+    this.colorModelProperty.setValue(new LinearRangeColorModel(minStop, maxStop));
+
     FxCanvas mapCanvas = this.createMap();
     this.addLayers(mapCanvas);
     ListProperty<Layer> layers = mapCanvas.getContent().getLayers();
     Layer baseMapLayer = layers.getValue().stream()
-      .filter((l)->l instanceof BaseMapTileLayer).findAny().get(); 
+      .filter((l) -> l instanceof BaseMapTileLayer).findAny().get();
     BaseMapToggle toggle = new BaseMapToggle((BaseMapTileLayer) baseMapLayer);
     toggle.addToMap(mapCanvas);
-    
+
     ColorLegendMapTool colorLegend = new ColorLegendMapTool(this.colorModelProperty.getValue());
     this.colorModelProperty.bind(colorLegend.colorModelProperty());
-    
+
     colorLegend.addToMap(mapCanvas);
-    
+
     Parent p = mapCanvas.getParent();
     Slider slider = new Slider(0, 10.0, 0);
     this.parameterProperty.bind(slider.valueProperty());
@@ -83,23 +87,22 @@ public class MainPointSymbologyWithData extends Application {
     this.addBaseMapLayer(mapCanvas);
     this.addPointsLayer(mapCanvas);
   }
-  
-  
+
   /**
-   * 
-   * @param mapCanvas 
+   *
+   * @param mapCanvas
    */
   private void addPointsLayer(FxCanvas mapCanvas) {
     FxPoint fxPoint = new FxPoint(-120.43, 37.36, new Wgs84Spheroid());
-    
+
     PointMarker<String> marker = new PointMarker<>("Merced", fxPoint);
     ArrayPointsSource source = new ArrayPointsSource<>(marker);
     PointValueSymbology<Double> symbology = new PointValueSymbology<>(0d);
     symbology.parameterProperty().bind(this.parameterProperty.asObject());
-    Evaluator<Double> evaluator = (t)->{
+    Evaluator<Double> evaluator = (t) -> {
       return t.getValue();
     };
-    
+
     ColorValueSymbology<Double> colorValueSymbology = new ColorValueSymbology<>(this.colorModelProperty.getValue(), evaluator);
     colorValueSymbology.colorModelProperty().bind(this.colorModelProperty);
     symbology.markerSymbology().setValue(colorValueSymbology);
@@ -136,14 +139,4 @@ public class MainPointSymbologyWithData extends Application {
     return mapCanvas;
   }
 
-  /**
-   * The main() method is ignored in correctly deployed JavaFX application. main() serves
-   * only as fallback in case the application can not be launched through deployment
-   * artifacts, e.g., in IDEs with limited FX support. NetBeans ignores main().
-   *
-   * @param args the command line arguments
-   */
-  public static void main(String[] args) {
-    launch(args);
-  }
 }

@@ -84,7 +84,7 @@ public class FileTileCache implements TileCache {
    */
   @Override
   public void put(BaseMap baseMap, TileIndices key, Tile tile) {
-    if (tile.getBaseMap() != baseMap) {
+    if (tile.getBaseMap() == baseMap) {
       File file = this.getFile(baseMap, key);
       Image image = tile.getImage().getValue();
       if (image != null) {

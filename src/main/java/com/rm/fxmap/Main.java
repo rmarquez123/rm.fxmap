@@ -1,6 +1,9 @@
 package com.rm.fxmap;
 
+import com.rm.fxmap.basemap.BaseMap;
 import com.rm.fxmap.basemap.BaseMapTileLayer;
+import com.rm.fxmap.basemap.tiles.FileTileCache;
+import com.rm.fxmap.basemap.tiles.TileCache;
 import com.rm.fxmap.projections.SpatialProjection;
 import com.rm.fxmap.projections.Wgs84Mercator;
 import com.rm.fxmap.projections.Wgs84Spheroid;
@@ -13,6 +16,7 @@ import com.rm.panzoomcanvas.impl.points.PointShapeSymbology;
 import com.rm.panzoomcanvas.layers.points.PointMarker;
 import com.rm.panzoomcanvas.layers.points.PointsLayer;
 import com.rm.panzoomcanvas.projections.Projector;
+import java.io.File;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -66,7 +70,10 @@ public class Main extends Application {
    * @param mapCanvas 
    */
   private void addBaseMapLayer(FxCanvas mapCanvas) {
-    mapCanvas.getContent().getLayers().add(new BaseMapTileLayer());
+    TileCache cache = new FileTileCache(new File("G:\\basemaps"));
+    BaseMap basemap = BaseMap.ESRI_WORLD;
+    BaseMapTileLayer layer = new BaseMapTileLayer(cache, basemap);
+    mapCanvas.getContent().getLayers().add(layer);
   }
 
   /**

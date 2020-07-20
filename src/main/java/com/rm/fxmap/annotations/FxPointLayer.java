@@ -49,13 +49,13 @@ public @interface FxPointLayer {
    *
    * @return
    */
-  String selectedColorHex();
+  String selectedColorHex() default "";
 
   /**
    *
    * @return
    */
-  int selectedWidth();
+  int selectedWidth() default -1;
 
   /**
    *
@@ -64,6 +64,12 @@ public @interface FxPointLayer {
   String visibilityId() default "";
 
   Label label() default @Label(ignore = true, textconvertId = "");
+  
+  /**
+   * 
+   * @return 
+   */
+  String symbologyId() default "";
 
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.ANNOTATION_TYPE)
@@ -83,7 +89,7 @@ public @interface FxPointLayer {
 
     double south() default Double.NaN;
 
-    String textconvertId();
+    String textconvertId() default "";
 
   }
 }

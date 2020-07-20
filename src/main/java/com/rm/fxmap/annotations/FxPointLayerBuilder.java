@@ -7,6 +7,7 @@ import com.rm.panzoomcanvas.impl.points.PointShape;
 import com.rm.panzoomcanvas.impl.points.PointShapeSymbology;
 import com.rm.panzoomcanvas.layers.points.Offset;
 import com.rm.panzoomcanvas.layers.points.PointMarker;
+import com.rm.panzoomcanvas.layers.points.PointSymbology;
 import com.rm.panzoomcanvas.layers.points.PointsLabel;
 import com.rm.panzoomcanvas.layers.points.PointsLayer;
 import com.rm.panzoomcanvas.layers.points.PointsSource;
@@ -23,22 +24,22 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Ricardo Marquez
  */
-public class FxPointLayerBuilder implements FxLayerBuilder{
+public class FxPointLayerBuilder implements FxLayerBuilder {
 
   private final ApplicationContext appContext;
 
   /**
-   * 
-   * @param appContext 
+   *
+   * @param appContext
    */
   FxPointLayerBuilder(ApplicationContext appContext) {
     this.appContext = appContext;
   }
-  
+
   /**
-   * 
+   *
    * @param bean
-   * @return 
+   * @return
    */
   @Override
   public boolean isBeanValid(Object bean) {
@@ -46,12 +47,11 @@ public class FxPointLayerBuilder implements FxLayerBuilder{
     boolean result = conf != null;
     return result;
   }
-  
-  
+
   /**
-   * 
+   *
    * @param bean
-   * @return 
+   * @return
    */
   @Override
   public String getRefMapId(Object bean) {
@@ -69,11 +69,11 @@ public class FxPointLayerBuilder implements FxLayerBuilder{
   public Layer createLayer(Object bean) {
     FxPointLayer conf = bean.getClass().getDeclaredAnnotation(FxPointLayer.class);
     String name = conf.name();
-    PointShapeSymbology symbology = this.getSymbology(conf);
+    PointSymbology symbology = this.getSymbology(conf);
     PointsSource<? extends Object> source = new ArrayPointsSource<>(new Wgs84Spheroid());
     PointsLayer<? extends Object> result = new PointsLayer<>(name, symbology, source);
-    result.selectableProperty().set(true);
-    result.hoverableProperty().set(true);
+    result.selectableProperty().set(!conf.selectedColorHex().isEmpty());
+    result.hoverableProperty().set(!conf.selectedColorHex().isEmpty());
     this.setLabel(conf, result);
     this.bindVisibility(conf, result);
     this.bindSelection(conf, result);
@@ -85,18 +85,25 @@ public class FxPointLayerBuilder implements FxLayerBuilder{
    * @param conf
    * @return
    */
-  private PointShapeSymbology getSymbology(FxPointLayer conf) {
-    PointShapeSymbology symbology = new PointShapeSymbology();
-    Color baseColor = Color.web(conf.basecolorHex());
-    Color strokeColor = conf.strokecolorHex().isEmpty() ? baseColor : Color.web(conf.strokecolorHex());
-
-    symbology.fillColorProperty().setValue(baseColor);
-    symbology.pointShapeProperty().setValue(PointShape.CIRCLE);
-    symbology.strokeColorProperty().setValue(strokeColor);
-    Color selectColor = Color.web(conf.selectedColorHex());
-    symbology.getSelected().fillColorProperty().setValue(selectColor);
-
-    return symbology;
+  private PointSymbology getSymbology(FxPointLayer conf) {
+    PointSymbology result;
+    if (conf.symbologyId().isEmpty()) {
+      PointShapeSymbology symbology = new PointShapeSymbology();
+      Color baseColor = Color.web(conf.basecolorHex());
+      Color strokeColor = conf.strokecolorHex().isEmpty() ? baseColor : Color.web(conf.strokecolorHex());
+      symbology.fillColorProperty().setValue(baseColor);
+      symbology.pointShapeProperty().setValue(PointShape.CIRCLE);
+      symbology.strokeColorProperty().setValue(strokeColor);
+      if (!conf.selectedColorHex().isEmpty()) {
+        Color selectColor = Color.web(conf.selectedColorHex());
+        symbology.getSelected().fillColorProperty().setValue(selectColor);
+      }
+      result = symbology;
+    } else {
+      result = this.appContext.getBean(conf.symbologyId(), PointSymbology.class);
+      
+    }
+    return result;
   }
 
   /**
@@ -129,19 +136,19 @@ public class FxPointLayerBuilder implements FxLayerBuilder{
         property.addListener((obs, old, change) -> {
           layer.selectByUserObject(change);
         });
-        
+
         layer.selectedMarkersProperty().addListener((obs, old, change) -> {
           PointMarker<?> newValue = change.stream().findFirst().orElse(null);
           ((Property) bean).setValue(newValue == null ? null : newValue.getUserObject());
         });
-        
+
         layer.getSource().pointMarkersProperty().addListener(new ListChangeListener<PointMarker<?>>() {
           @Override
           public void onChanged(ListChangeListener.Change<? extends PointMarker<?>> c) {
             layer.selectByUserObject(property.getValue());
           }
         });
-        
+
       } else {
         throw new IllegalStateException(
           String.format("bean '%s' is not a property instance", selectedBeanId));
