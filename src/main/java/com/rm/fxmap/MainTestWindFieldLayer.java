@@ -20,6 +20,7 @@ import com.rm.panzoomcanvas.projections.Projector;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.property.ListProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -90,6 +91,13 @@ public class MainTestWindFieldLayer extends Application {
     PointsLayer layer = new PointsLayer("aasf", symbology, source);
     layer.selectableProperty().setValue(true);
     layer.hoverableProperty().setValue(true);
+    layer.selectedMarkersProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+      if (newValue != null) {
+        System.out.println(newValue);
+        System.out.println(displaySupplier(newValue));
+        
+      }
+    });
     mapCanvas.getContent().getLayers().add(layer);
   }
     
