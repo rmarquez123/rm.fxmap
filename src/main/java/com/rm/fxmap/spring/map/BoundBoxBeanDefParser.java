@@ -1,6 +1,5 @@
 package com.rm.fxmap.spring.map;
 
-import com.rm.springjavafx.bindings.ContentPanel;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;

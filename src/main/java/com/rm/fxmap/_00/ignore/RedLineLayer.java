@@ -19,10 +19,10 @@ import org.springframework.stereotype.Component;
 @FxLineLayer(
   mapId = "mymap",
   name = "Blue Points",
-  basecolorHex = "purple",
-  basewidth = 4,
+  basecolorHex = "blue",
+  basewidth = 1,
   selectedColorHex = "#eb8c34",
-  selectedWidth = 4,
+  selectedWidth = 1,
   visibilityId = "pointLayerVisibility"
 )
 public class RedLineLayer extends AbstractFxLineLayer implements InitializingBean {

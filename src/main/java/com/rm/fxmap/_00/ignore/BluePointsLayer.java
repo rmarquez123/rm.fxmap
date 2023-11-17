@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
 @FxPointLayer(
   mapId = "mymap",
   name = "Blue Points",
-  basecolorHex = "#302a25",
-  basewidth = 4,
+  basecolorHex = "#000000",
+  basewidth = 1,
   selectedColorHex = "#eb8c34",
-  selectedWidth = 4,
+  selectedWidth = 1,
   visibilityId = "pointLayerVisibility",
   label = @FxPointLayer.Label(textconvertId = "pointsLayerTextConverter")
 )

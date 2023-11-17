@@ -1,7 +1,6 @@
 package com.rm.fxmap;
 
 
-import com.rm.panzoomcanvas.FxCanvas;
 import com.rm.springjavafx.FxmlInitializer;
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -56,7 +55,6 @@ public class MainSpring extends Application {
     }
     this.root.getStylesheets().add("styles/window-style.css"); 
     this.root.getStylesheets().add("styles/menu-style.css"); 
-    FxCanvas a = this.context.getBean(FxCanvas.class);
     
   }
 

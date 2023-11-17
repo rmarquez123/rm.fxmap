@@ -16,10 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Lazy(false)
 @FxController(fxml = "fxml/Main.fxml")
-@FxMap(
-  id = "mymap",
-  nodeId = "mapstackpane"
-)
+@FxMap(id = "mymap", nodeId = "mapstackpane")
 public class MyMap implements InitializingBean {
   
   @ChildNode(id = "visibileCheckbox")
@@ -32,6 +29,7 @@ public class MyMap implements InitializingBean {
    */
   @Override
   public void afterPropertiesSet() throws Exception {
+    
   }
 
 }

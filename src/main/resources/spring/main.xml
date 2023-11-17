@@ -18,7 +18,7 @@
           http://www.mycompany.com/schema/fxmap http://www.mycompany.com/schema/fxmap/fxmap.xsd">
           
   
-  <bean class="com.rm.springjavafx.FxmlInitializer"> 
+<!--  <bean class="com.rm.springjavafx.FxmlInitializer"> 
     <property name="sceneRoot" value="fxml/Main.fxml"/>
     <property name="fxmlList"> 
       <list> 
@@ -45,5 +45,5 @@
              parentFxml="fxml/Main.fxml" 
              parentNode="mapstackpane"
              layersRef="layersList"
-             bbox="bboxProperty"/> 
+             bbox="bboxProperty"/> -->
 </beans>

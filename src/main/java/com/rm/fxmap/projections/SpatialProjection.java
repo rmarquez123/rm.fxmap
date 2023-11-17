@@ -4,13 +4,18 @@ import com.rm.panzoomcanvas.core.FxPoint;
 import com.rm.panzoomcanvas.core.GeometryProjection;
 import com.rm.panzoomcanvas.core.Point;
 import com.rm.panzoomcanvas.core.SpatialRef;
-import com.vividsolutions.jts.geom.Coordinate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.referencing.CRS;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.CoordinateOperation;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CoordinateTransform;
+import org.locationtech.proj4j.CoordinateTransformFactory;
+import org.locationtech.proj4j.InvalidValueException;
+import org.locationtech.proj4j.ProjCoordinate;
+import org.locationtech.proj4j.UnknownAuthorityCodeException;
+import org.locationtech.proj4j.UnsupportedParameterException;
 
 /**
  *
@@ -18,20 +23,17 @@ import org.opengis.referencing.operation.CoordinateOperation;
  */
 public class SpatialProjection implements GeometryProjection {
 
-  private static CoordinateOperation operation;
   private CoordinateReferenceSystem sourceCRS;
   private CoordinateReferenceSystem targetCRS;
+  private Map<Integer, CoordinateReferenceSystem> crs = new HashMap<>();
 
   /**
    *
    */
   public SpatialProjection() {
     try {
-      this.sourceCRS = CRS.forCode("EPSG:4326");
-      this.targetCRS = CRS.forCode("EPSG:3857");
-      if (operation == null) {
-        operation = CRS.findOperation(sourceCRS, targetCRS, null);
-      }
+      this.sourceCRS = new CRSFactory().createFromName("EPSG:4326");
+      this.targetCRS = new CRSFactory().createFromName("EPSG:3857");
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
@@ -46,42 +48,46 @@ public class SpatialProjection implements GeometryProjection {
   public FxPoint project(FxPoint geomPoint, SpatialRef targetSr) {
     Objects.requireNonNull(geomPoint);
     Objects.requireNonNull(targetSr);
-    FxPoint result;
     int targetSrid = targetSr.getSrid();
     int sourceSrid = geomPoint.getSpatialRef().getSrid();
-
-    try {
-      if (targetSrid == sourceSrid) {
-        result = geomPoint;
-      } else if (targetSrid == 4326) {
-        CoordinateReferenceSystem target = CRS.forCode("EPSG:" + targetSrid);
-        CoordinateReferenceSystem source = CRS.forCode("EPSG:" + sourceSrid);
-        CoordinateOperation op = CRS.findOperation(target, source, null);
-        DirectPosition ptSrc = new DirectPosition2D(geomPoint.getX(), geomPoint.getY());
-        DirectPosition ptDst = op.getMathTransform().inverse().transform(ptSrc, null);
-        result = new FxPoint(ptDst.getCoordinate()[1], ptDst.getCoordinate()[0], targetSr);
-      } else if (sourceSrid == 4326) {
-        CoordinateReferenceSystem target = CRS.forCode("EPSG:" + targetSrid);
-        CoordinateReferenceSystem source = CRS.forCode("EPSG:" + sourceSrid);
-        CoordinateOperation op = CRS.findOperation(target, source, null);
-        DirectPosition ptSrc = new DirectPosition2D(geomPoint.getY(), geomPoint.getX());
-        DirectPosition ptDst = op.getMathTransform().inverse().transform(ptSrc, null);
-        result = new FxPoint(ptDst.getCoordinate()[0], ptDst.getCoordinate()[1], targetSr);
-      } else {
-        CoordinateReferenceSystem target = CRS.forCode("EPSG:" + targetSrid);
-        CoordinateReferenceSystem source = CRS.forCode("EPSG:" + sourceSrid);
-        CoordinateOperation op = CRS.findOperation(source, target, null);
-        DirectPosition ptSrc = new DirectPosition2D(geomPoint.getX(), geomPoint.getY());
-        DirectPosition ptDst = op.getMathTransform().transform(ptSrc, null);
-        result = new FxPoint(ptDst.getCoordinate()[0], ptDst.getCoordinate()[1], targetSr);
-      }
-    } catch (Exception ex) {
-      throw new RuntimeException("Error on projecting point. Check args : {"
-        + "geomPoint = " + geomPoint
-        + ", targetSr  =" + targetSr.getSrid()
-        + "}", ex);
-    }
+    CoordinateTransform transform = getTransform(targetSrid, sourceSrid);
+    ProjCoordinate resultProjCoordinate = new ProjCoordinate();
+    transform.transform(new ProjCoordinate(geomPoint.getX(), geomPoint.getY()), resultProjCoordinate);
+    FxPoint result = new FxPoint(resultProjCoordinate.x, resultProjCoordinate.y, targetSr);
     return result;
+  }
+
+  /**
+   *
+   * @param targetSrid
+   * @param sourceSrid
+   * @return
+   * @throws UnknownAuthorityCodeException
+   * @throws UnsupportedParameterException
+   * @throws InvalidValueException
+   */
+  private CoordinateTransform getTransform(int targetSrid, int sourceSrid) {
+    
+    CoordinateReferenceSystem target = this.getCrs(targetSrid);
+    CoordinateReferenceSystem source = this.getCrs(sourceSrid);
+    CoordinateTransformFactory f = new CoordinateTransformFactory();
+    CoordinateTransform transform = f.createTransform(source, target);
+    return transform;
+  }
+  
+  /**
+   * 
+   * @param factory
+   * @param srid
+   * @return 
+   */
+  private synchronized CoordinateReferenceSystem getCrs(int srid)  {
+    if (!crs.containsKey(srid)) {
+      CRSFactory factory = new CRSFactory();
+      CoordinateReferenceSystem result = factory.createFromName("EPSG:" + srid);
+      this.crs.put(srid, result); 
+    }
+    return crs.get(srid);
   }
 
   /**
@@ -92,39 +98,13 @@ public class SpatialProjection implements GeometryProjection {
    * @return
    */
   public Coordinate project(Coordinate p, int sourceSrid, int targetSrid) {
-    Coordinate result;
-    try {
-      if (targetSrid == sourceSrid) {
-        result = p;
-      } else if (targetSrid == 4326) {
-        CoordinateReferenceSystem target = CRS.forCode("EPSG:" + targetSrid);
-        CoordinateReferenceSystem source = CRS.forCode("EPSG:" + sourceSrid);
-        CoordinateOperation op = CRS.findOperation(target, source, null);
-        DirectPosition ptSrc = new DirectPosition2D(p.x, p.y);
-        DirectPosition ptDst = op.getMathTransform().inverse().transform(ptSrc, null);
-        result = new Coordinate(ptDst.getCoordinate()[1], ptDst.getCoordinate()[0]);
-      } else if (sourceSrid == 4326) {
-        CoordinateReferenceSystem target = CRS.forCode("EPSG:" + targetSrid);
-        CoordinateReferenceSystem source = CRS.forCode("EPSG:" + sourceSrid);
-        CoordinateOperation op = CRS.findOperation(target, source, null);
-        DirectPosition ptSrc = new DirectPosition2D(p.y, p.x);
-        DirectPosition ptDst = op.getMathTransform().inverse().transform(ptSrc, null);
-        result = new Coordinate(ptDst.getCoordinate()[0], ptDst.getCoordinate()[1]);
-      } else {
-        CoordinateReferenceSystem target = CRS.forCode("EPSG:" + targetSrid);
-        CoordinateReferenceSystem source = CRS.forCode("EPSG:" + sourceSrid);
-        CoordinateOperation op = CRS.findOperation(source, target, null);
-        DirectPosition ptSrc = new DirectPosition2D(p.x, p.y);
-        DirectPosition ptDst = op.getMathTransform().transform(ptSrc, null);
-        result = new Coordinate(ptDst.getCoordinate()[0], ptDst.getCoordinate()[1]);
-      }
-    } catch (Exception ex) {
-      throw new RuntimeException("Error on projecting point. Check args : {"
-        + "geomPoint = " + p
-        + ", sourceSrid  =" + sourceSrid
-        + ", targetSrid  =" + targetSrid
-        + "}", ex);
-    }
+    Objects.requireNonNull(p);
+    Objects.requireNonNull(sourceSrid);
+    CoordinateTransform transform = getTransform(targetSrid, sourceSrid);
+    ProjCoordinate resultProjCoordinate = new ProjCoordinate();
+    transform.transform(new ProjCoordinate(p.getX(), p.getY()), resultProjCoordinate);
+    Coordinate result = new Coordinate(resultProjCoordinate.x, resultProjCoordinate.y);
+    
     return result;
   }
 

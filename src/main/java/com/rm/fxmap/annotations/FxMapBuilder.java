@@ -65,7 +65,7 @@ public class FxMapBuilder {
     StackPane.setAlignment(positionBar, Pos.BOTTOM_RIGHT);
     mapCanvas.addTool(positionBar);
     root.getChildren().addAll(mapCanvas);
-    
+
     StackPane.setAlignment(mapCanvas, Pos.CENTER);
     mapCanvas.widthProperty().bind(root.widthProperty());
     mapCanvas.heightProperty().bind(root.heightProperty());
@@ -84,8 +84,11 @@ public class FxMapBuilder {
         }
       });
     });
+    mapCanvas.bindSize();
     return mapCanvas;
   }
+
+
 
   /**
    *

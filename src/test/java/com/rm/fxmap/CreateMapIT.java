@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/spring/main.xml"})
-public class CreateMapTest {
+public class CreateMapIT {
 
   @Autowired
   ApplicationContext appContext;

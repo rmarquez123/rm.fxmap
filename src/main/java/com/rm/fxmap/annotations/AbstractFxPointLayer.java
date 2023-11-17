@@ -20,7 +20,7 @@ public class AbstractFxPointLayer implements FxMapLayer {
   @Override
   public final void setLayer(Layer layer) {
     if ( !(layer instanceof PointsLayer)) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("layer is not a pointslayer");
     }
     this.layer = (PointsLayer) layer;
   }
